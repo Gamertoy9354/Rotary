@@ -10,6 +10,7 @@ import PostDetail from './pages/PostDetail';
 import Projects from './pages/Projects';
 import ProjectDetail from './pages/ProjectDetail';
 import Community from './pages/Community';
+import Gallery from './pages/Gallery';
 import GroupDetail from './pages/GroupDetail';
 import Profile from './pages/Profile';
 import Help from './pages/Help';
@@ -37,6 +38,7 @@ export default function App() {
             <Route path="projects" element={<Projects />} />
             <Route path="projects/:slug" element={<ProjectDetail />} />
             <Route path="community" element={<Community />} />
+            <Route path="gallery" element={<Gallery />} />
             <Route path="groups/:slug" element={<GroupDetail />} />
             <Route path="u/:id" element={<Profile />} />
             <Route path="help" element={<Help />} />

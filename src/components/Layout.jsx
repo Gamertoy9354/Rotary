@@ -25,6 +25,7 @@ export default function Layout() {
             <NavLink to="/" end onClick={close}>Home</NavLink>
             <NavLink to="/projects" onClick={close}>Projects</NavLink>
             <NavLink to="/community" onClick={close}>Community</NavLink>
+            <NavLink to="/gallery" onClick={close}>Gallery</NavLink>
             <NavLink to="/feed" onClick={close}>Feed</NavLink>
             <NavLink to="/help" onClick={close}>Request Help</NavLink>
             <NavLink to="/donate" onClick={close}>Donate</NavLink>
