@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Board member source posters (cropped versions live in public/images/board/)
+Board-Of-Members/
+board_map.json

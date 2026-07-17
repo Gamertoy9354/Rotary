@@ -8,6 +8,7 @@ import Avatar from '../components/Avatar';
 export default function Community() {
   const [groups, setGroups] = useState(null);
   const [people, setPeople] = useState(null);
+  const [board, setBoard] = useState(null);
   const [counts, setCounts] = useState({});
   const [roleFilter, setRoleFilter] = useState('all');
 
@@ -22,12 +23,29 @@ export default function Community() {
     // People = registered profiles + club roster entries who haven't signed up yet
     Promise.all([
       supabase.from('profiles').select('id, email, full_name, avatar_url, role, title, member_since, bio'),
-      supabase.from('club_roster').select('email, full_name, role, title, member_since'),
+      supabase.from('club_roster').select('email, full_name, role, title, member_since, avatar_url, board_order'),
     ]).then(([{ data: profiles }, { data: roster }]) => {
       const registered = (profiles ?? []).map((p) => ({ ...p, registered: true }));
-      const seen = new Set(registered.map((p) => p.email?.toLowerCase()));
-      const unregistered = (roster ?? [])
-        .filter((r) => !seen.has(r.email?.toLowerCase()))
+      const byEmail = new Map(registered.map((p) => [p.email?.toLowerCase(), p]));
+      const rosterList = roster ?? [];
+
+      // Board of Directors 2026-27 — prefer a registered profile's live data if present
+      const boardRows = rosterList
+        .filter((r) => r.board_order != null)
+        .sort((a, b) => a.board_order - b.board_order)
+        .map((r) => {
+          const reg = byEmail.get(r.email?.toLowerCase());
+          return {
+            id: reg?.id ?? null,
+            full_name: r.full_name,
+            title: r.title,
+            avatar_url: reg?.avatar_url || r.avatar_url,
+          };
+        });
+      setBoard(boardRows);
+
+      const unregistered = rosterList
+        .filter((r) => !byEmail.has(r.email?.toLowerCase()))
         .map((r) => ({ ...r, id: null, registered: false }));
       const order = { admin: 0, officer: 1, member: 2, visitor: 3 };
       const all = [...registered, ...unregistered].sort(
@@ -52,6 +70,33 @@ export default function Community() {
             the platform as a supporter.
           </p>
         </div>
+
+        {board && board.length > 0 && (
+          <section style={{ marginBottom: 54 }}>
+            <h2 style={{ fontSize: '1.3rem', marginBottom: 4 }}>Board of Directors 2026&ndash;27</h2>
+            <p style={{ color: 'var(--ink-soft)', fontSize: '.92rem', marginBottom: 20 }}>
+              The elected leadership serving the Rotary Club of Bardoli this year.
+            </p>
+            <div className="board-grid">
+              {board.map((m) => {
+                const card = (
+                  <>
+                    <span className="board-photo">
+                      {m.avatar_url
+                        ? <img src={m.avatar_url} alt={m.full_name} loading="lazy" />
+                        : <Wheel />}
+                    </span>
+                    <b>Rtn. {m.full_name}</b>
+                    <span className="board-role">{m.title}</span>
+                  </>
+                );
+                return m.id
+                  ? <Link className="board-card" key={m.full_name} to={`/u/${m.id}`}>{card}</Link>
+                  : <div className="board-card" key={m.full_name}>{card}</div>;
+              })}
+            </div>
+          </section>
+        )}
 
         <h2 style={{ fontSize: '1.3rem', marginBottom: 18 }}>Committees & groups</h2>
         {groups === null ? <Spinner /> : (
@@ -90,7 +135,7 @@ export default function Community() {
             {visible.length === 0 && <p className="empty">No one in this category yet.</p>}
             {visible.map((p) => (
               <div className="member-row" key={p.id ?? `roster-${p.email}`}>
-                <Avatar profile={p.registered ? p : null} name={p.full_name} size={44} />
+                <Avatar profile={(p.registered || p.avatar_url) ? p : null} name={p.full_name} size={44} />
                 <div className="m-meta">
                   <b>
                     {p.registered

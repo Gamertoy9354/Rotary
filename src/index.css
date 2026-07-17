@@ -327,6 +327,33 @@ h1, h2, h3, h4 { font-family: var(--font-display); color: var(--royal); line-hei
 .dash-side .divider { border-top: 1px solid var(--line); margin: 8px 0; }
 .dash-side .side-label { font-size: .68rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); padding: 8px 14px 2px; }
 
+/* ── Board of Directors grid ── */
+.board-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 18px;
+}
+.board-card {
+  background: var(--white); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 22px 16px 20px; text-align: center; text-decoration: none !important;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+a.board-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--gold); }
+.board-photo {
+  width: 108px; height: 108px; border-radius: 50%; overflow: hidden;
+  background: var(--royal); color: var(--gold); margin-bottom: 12px;
+  display: grid; place-items: center; border: 3px solid var(--gold-soft);
+}
+.board-photo img { width: 100%; height: 100%; object-fit: cover; }
+.board-photo svg { width: 60%; height: 60%; }
+.board-card b { font-size: .95rem; color: var(--ink); line-height: 1.25; }
+.board-role {
+  font-size: .76rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--azure);
+}
+.board-card:first-child .board-photo { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-soft); }
+
 /* ── Members directory ── */
 .member-row { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-top: 1px solid var(--line); }
 .member-row:first-child { border-top: 0; }
